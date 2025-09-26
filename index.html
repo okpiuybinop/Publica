@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Ebooków AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.2/dist/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Nagłówek -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">Generator Ebooków AI</h1>
+            <p class="text-gray-600">Wpisz temat, a sztuczna inteligencja stworzy dla Ciebie pełny ebook z grafikami</p>
+        </header>
+
+        <!-- Formularz wprowadzenia tematu -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="mb-4">
+                <label for="ebook-topic" class="block text-sm font-medium text-gray-700 mb-2">Temat ebooka</label>
+                <input 
+                    type="text" 
+                    id="ebook-topic" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Na przykład: Sztuczna Inteligencja w biznesie"
+                >
+            </div>
+            
+            <div class="flex gap-4 mb-4">
+                <div class="flex-1">
+                    <label for="ebook-chapters" class="block text-sm font-medium text-gray-700 mb-2">Liczba rozdziałów</label>
+                    <select id="ebook-chapters" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="3">3 rozdziały</option>
+                        <option value="5" selected>5 rozdziałów</option>
+                        <option value="7">7 rozdziałów</option>
+                        <option value="10">10 rozdziałów</option>
+                    </select>
+                </div>
+                
+                <div class="flex-1">
+                    <label for="ebook-style" class="block text-sm font-medium text-gray-700 mb-2">Styl ebooka</label>
+                    <select id="ebook-style" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                        <option value="academic">Akademicki</option>
+                        <option value="business" selected>Biznesowy</option>
+                        <option value="creative">Kreatywny</option>
+                        <option value="technical">Techniczny</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button 
+                id="generate-btn" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 flex items-center justify-center"
+            >
+                <span class="mr-2">Generuj ebook</span>
+                <i class="fas fa-magic"></i>
+            </button>
+        </div>
+
+        <!-- Sekcja ładowania -->
+        <div id="loading-section" class="hidden text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600 mb-4"></div>
+            <p class="text-gray-600">Generowanie ebooka... Proszę czekać</p>
+        </div>
+
+        <!-- Sekcja wynikowa -->
+        <div id="result-section" class="hidden">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                <div class="p-6">
+                    <h2 id="ebook-title" class="text-2xl font-bold text-gray-800 mb-4"></h2>
+                    
+                    <div id="ebook-content" class="space-y-8">
+                        <!-- Zawartość ebooka zostanie tutaj wygenerowana dynamicznie -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button 
+                    id="download-pdf" 
+                    class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-8 rounded-md transition duration-200 inline-flex items-center"
+                >
+                    <i class="fas fa-download mr-2"></i>
+                    Pobierz jako PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopka z linkami do GitHuba -->
+    <footer class="mt-16 py-6 border-t border-gray-200 text-center text-gray-600">
+        <div class="container mx-auto">
+            <p class="mb-4">🔗 Projekt dostępny na GitHub:</p>
+            <a href="https://github.com/twoj-nazwa-repozytorium/ebook-generator-ai" 
+               target="_blank" 
+               class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center mb-4">
+                <i class="fab fa-github mr-2"></i>
+                Kod źródłowy projektu
+            </a>
+            
+            <div class="flex justify-center space-x-4 mt-4">
+                <iframe 
+                    src="https://ghbtns.com/github-btn.html?user=twoj-uzytkownik&repo=ebook-generator-ai&type=star&count=true&size=large" 
+                    frameborder="0" 
+                    scrolling="0" 
+                    width="160" 
+                    height="30" 
+                    title="GitHub Stars"
+                ></iframe>
+                <iframe 
+                    src="https://ghbtns.com/github-btn.html?user=twoj-uzytkownik&repo=ebook-generator-ai&type=fork&count=true&size=large" 
+                    frameborder="0" 
+                    scrolling="0" 
+                    width="160" 
+                    height="30" 
+                    title="GitHub Forks"
+                ></iframe>
+            </div>
+            
+            <p class="mt-6 text-sm">* Zastąp <code>twoj-nazwa-repozytorium</code> i <code>twoj-uzytkownik</code> swoimi danymi</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generate-btn');
+            const loadingSection = document.getElementById('loading-section');
+            const resultSection = document.getElementById('result-section');
+            const ebookTitle = document.getElementById('ebook-title');
+            const ebookContent = document.getElementById('ebook-content');
+            const downloadBtn = document.getElementById('download-pdf');
+
+            generateBtn.addEventListener('click', async function() {
+                const topic = document.getElementById('ebook-topic').value.trim();
+                const chaptersCount = parseInt(document.getElementById('ebook-chapters').value);
+                const style = document.getElementById('ebook-style').value;
+
+                if (!topic) {
+                    alert('Proszę wprowadzić temat ebooka!');
+                    return;
+                }
+
+                // Pokaż sekcję ładowania
+                loadingSection.classList.remove('hidden');
+                resultSection.classList.add('hidden');
+                generateBtn.disabled = true;
+
+                try {
+                    // Symulacja wywołania API AI (w rzeczywistości byłoby to połączenie z serwerem)
+                    const ebookData = await generateEbookContent(topic, chaptersCount, style);
+                    
+                    // Wyświetl wynik
+                    displayEbook(ebookData);
+                    
+                    loadingSection.classList.add('hidden');
+                    resultSection.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Błąd generowania ebooka:', error);
+                    alert('Wystąpił błąd podczas generowania ebooka. Spróbuj ponownie.');
+                    loadingSection.classList.add('hidden');
+                    generateBtn.disabled = false;
+                }
+            });
+
+            downloadBtn.addEventListener('click', function() {
+                const element = document.getElementById('ebook-content');
+                const opt = {
+                    margin: 1,
+                    filename: `${ebookTitle.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                html2pdf().set(opt).from(element).save();
+            });
+
+            // Funkcja symulująca generowanie zawartości ebooka przez AI
+            async function generateEbookContent(topic, chaptersCount, style) {
+                // Symulacja opóźnienia (jakby było połączenie z API)
+                await new Promise(resolve => setTimeout(resolve, 3000));
+
+                // Przykładowe dane - w rzeczywistości byłyby generowane przez AI
+                const styles = {
+                    academic: "formalny język akademicki z odniesieniami naukowymi",
+                    business: "praktyczny język biznesowy z przykładami i wskazówkami",
+                    creative: "kreatywny i inspirujący styl z opowieściami i metaforami",
+                    technical: "precyzyjny język techniczny z kodem i diagramami"
+                };
+
+                const chapters = [];
+                for (let i = 1; i <= chaptersCount; i++) {
+                    chapters.push({
+                        title: `Rozdział ${i}: ${getChapterTitle(topic, i)}`,
+                        content: generateChapterContent(topic, i, style),
+                        image: `https://picsum.photos/seed/${topic}-${i}/800/400.jpg`
+                    });
+                }
+
+                return {
+                    title: `${topic} - Kompletny przewodnik`,
+                    chapters: chapters,
+                    style: styles[style]
+                };
+            }
+
+            function getChapterTitle(topic, chapterNumber) {
+                const titles = {
+                    1: "Wprowadzenie i podstawy",
+                    2: "Historia i rozwój",
+                    3: "Główne koncepcje i mechanizmy",
+                    4: "Praktyczne zastosowania",
+                    5: "Narzędzia i technologie",
+                    6: "Wybrane przypadki studyjne",
+                    7: "Wyzwania i przyszłość",
+                    8: "Zaawansowane techniki",
+                    9: "Etyka i społeczeństwo",
+                    10: "Podsumowanie i wnioski"
+                };
+                return titles[chapterNumber] || `Rozdział specjalny ${chapterNumber}`;
+            }
+
+            function generateChapterContent(topic, chapterNumber, style) {
+                const contents = {
+                    academic: `Ten rozdział przedstawia szczegółową analizę ${topic} w kontekście akademickim. Omówione zostaną kluczowe teorie oraz badania naukowe dotyczące tego obszaru. Prezentowane będą również metody badawcze oraz ich zastosowanie w praktyce.`,
+                    business: `W tym rozdziale dowiesz się, jak wykorzystać ${topic} w środowisku biznesowym. Poznasz konkretne strategie, narzędzia oraz case studies firm, które osiągnęły sukces dzięki implementacji tej technologii. Dowiedz się, jak zoptymalizować procesy i zwiększyć wydajność.`,
+                    creative: `Odkryj magiczny świat ${topic}! Ten rozdział zabierze Cię w podróż pełną inspiracji i kreatywnych pomysłów. Poznaj niesamowite historie, wizje przyszłości oraz sposoby, w jakie ta technologia zmienia nasze życie i sposób myślenia.`,
+                    technical: `Rozdział ten skupia się na technicznych aspektach ${topic}. Omówione zostaną algorytmy, architektury systemów oraz najlepsze praktyki programistyczne. Prezentowane będą fragmenty kodu oraz diagramy architektoniczne dla zaawansowanych użytkowników.`
+                };
+
+                // Dodaj trochę losowości do treści
+                const additionalContent = [
+                    `Szczególnie ważnym aspektem jest ${getRandomAspect(topic)}. `,
+                    `Badania pokazują, że ${getRandomFact(topic)}.\n\n`,
+                    `Jak podkreśla wielu ekspertów, ${getRandomExpertQuote(topic)}.\n\n`
+                ];
+
+                return contents[style] + additionalContent[Math.floor(Math.random() * additionalContent.length)];
+            }
+
+            function getRandomAspect(topic) {
+                const aspects = ["modelowanie danych", "uczenie maszynowe", "sieci neuronowe", "przetwarzanie języka naturalnego", "robotyka", "automatyzacja"];
+                return aspects[Math.floor(Math.random() * aspects.length)];
+            }
+
+            function getRandomFact(topic) {
+                const facts = [
+                    "implementacja tej technologii może przynieść nawet 30% wzrost efektywności",
+                    "ponad 80% firm planuje inwestycje w tę dziedzinę",
+                    "badania wykazały znaczący wpływ na rozwój branż"
+                ];
+                return facts[Math.floor(Math.random() * facts.length)];
+            }
+
+            function getRandomExpertQuote(topic) {
+                const quotes = [
+                    `"${topic} zmieni sposób, w jaki postrzegamy świat." - Prof. Anna Kowalska`,
+                    `"To nie jest pytanie czy, ale kiedy ta technologia stanie się dominującą." - Dr Jan Nowak`,
+                    `"Przyszłość należy do tych, którzy potrafią wykorzystać możliwości ${topic}." - Ekspert branżowy"`
+                ];
+                return quotes[Math.floor(Math.random() * quotes.length)];
+            }
+
+            function displayEbook(data) {
+                ebookTitle.textContent = data.title;
+                
+                let contentHtml = '';
+                data.chapters.forEach(chapter => {
+                    contentHtml += `
+                        <div class="chapter">
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">${chapter.title}</h3>
+                            <img src="${chapter.image}" alt="${chapter.title}" class="w-full h-64 object-cover rounded-lg mb-4">
+                            <p class="text-gray-700 leading-relaxed">${chapter.content}</p>
+                        </div>
+                    `;
+                });
+
+                ebookContent.innerHTML = contentHtml;
+            }
+        });
+    </script>
+</body>
+</html>
